@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ludo 게임</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Ludo 게임</h1>
+        <div id="board">
+            <!-- 보드에 말을 배치할 공간 -->
+        </div>
+        <div id="dice">
+            <p>주사위 결과: <span id="diceResult">-</span></p>
+            <button id="rollDice">주사위 굴리기</button>
+        </div>
+        <button id="reset">게임 재시작</button>
+        <p id="status">게임 진행 상태</p>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+<styles class="css"></styles>
+<styles class="css">body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+    margin: 0;
+}
+
+.container {
+    text-align: center;
+}
+
+h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+#board {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    border: 2px solid #333;
+    background-color: #e8e8e8;
+    margin-bottom: 20px;
+}
+
+.player {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    transition: transform 0.5s ease-in-out;
+}
+
+#dice {
+    margin-bottom: 20px;
+}
+
+#dice p {
+    font-size: 1.2em;
+}
+
+#reset {
+    font-size: 1em;
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    cursor
+</styles>
+<script class="js">document.addEventListener('DOMContentLoaded', () => {
+    const board = document.getElementById('board');
+    const diceResultDisplay = document.getElementById('diceResult');
+    const rollDiceButton = document.getElementById('rollDice');
+    const resetButton = document.getElementById('reset');
+    const statusDisplay = document.getElementById('status');
+
+    const players = ['Player', 'AI'];
+    const colors = ['#e74c3c', '#3498db'];
+    const numPlayers = players.length;
+    const numPawnsPerPlayer = 4;
+    let currentPlayerIndex = 0;
+    let diceResult = 1;
+    let gameActive = true;
+
+    // Game state: positions of pawns for each player
+    let playerPositions = [
+        [0, 0, 0, 0], // Player 1's pawns (initially at home)
+        [0, 0, 0, 0]  // AI's pawns (initially at home)
+    ];
+
+    const createBoard = () => {
+        for (let i = 0; i < numPlayers; i++) {
+            const playerColor = colors[i];
+            const playerDiv = document.createElement('div');
+            playerDiv.classList.add('player');
+
+            for (let j = 0; j < numPawnsPerPlayer; j++) {
+                const pawn = document.createElement('div');
+                pawn.classList.add('pawn');
+                pawn.style.backgroundColor = playerColor;
+                playerDiv.appendChild(pawn);
+            }
+
+            board.appendChild(playerDiv);
+        }
+    };
+
+    const rollDice = () => {
+        diceResult = Math.floor(Math.random() * 6) + 1;
+        diceResultDisplay.textContent = diceResult;
+    };
+
+    const movePawn = (playerIndex, pawnIndex) => {
+        if (!gameActive) return;
+
+        // Check if pawn is at home and dice result is 6 to move out
+        if (playerPositions[playerIndex][pawnIndex] === 0 && diceResult === 6) {
+            playerPositions[playerIndex][pawnIndex] = 1; // Move out from home
+        } else {
+            playerPositions[playerIndex][pawnIndex] += diceResult; // Move forward
+        }
+
+        // Check if pawn has reached the goal
+        if (playerPositions[playerIndex][pawnIndex] > 40) {
+            playerPositions[playerIndex][pawnIndex] = 41; // Reached goal
+        }
+
+        updateBoard();
+        checkWin(playerIndex);
+        switchPlayer();
+    };
+
+    const aiMove = () => {
+        if (!gameActive) return;
+
+        setTimeout(() => {
+            const availablePawns = [];
+            for (let i = 0; i < numPawnsPerPlayer; i++) {
+                if (playerPositions[1][i] === 0 && diceResult === 6) {
+                    availablePawns.push(i);
+                } else if (playerPositions[1][i] > 0 && playerPositions[1][i] <= 40) {
+                    availablePawns.push(i);
+                }
+            }
+
+            if (availablePawns.length > 0) {
+                const randomPawnIndex = availablePawns[Math.floor(Math.random() * availablePawns.length)];
+                movePawn(1, randomPawnIndex);
+            } else {
+                switchPlayer();
+            }
+        }, 1000); // AI moves with a delay of 1 second
+    };
+
+    const switchPlayer = () => {
+        currentPlayerIndex = (currentPlayerIndex + 1) % numPlayers;
+        if (currentPlayerIndex === 1) {
+            rollDiceButton.disabled = true; // Disable roll dice button during AI's turn
+            aiMove();
+        } else {
+            rollDiceButton.disabled = false; // Enable roll dice button during player's turn
+        }
+        statusDisplay.textContent = `${players[currentPlay
+</script>
